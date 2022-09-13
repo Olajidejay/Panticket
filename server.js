@@ -61,7 +61,8 @@ server.use(
   })
 );
 
-const port = 4001;
+const port = process.env.PORT  || 4001;
+
 
 server.get("/", homeController);
 
