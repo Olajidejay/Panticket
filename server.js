@@ -1,7 +1,7 @@
 import express from "express";
 import { homeController } from "./controllers/home.controller";
 import mongoose from "mongoose";
-import dotenv from "dotenv";
+
 import {
   createEvent,
   fetchEvents,
@@ -43,7 +43,7 @@ import {
   fetchTicketTypeById,
   updateTicketType,
 } from "./controllers/tickettype.controller";
-import { validate } from "uuid";
+const dotenv = require("dotenv");
 dotenv.config();
 
 const connectToDB = () => mongoose.connect(process.env.DEV_DB);
@@ -61,8 +61,7 @@ server.use(
   })
 );
 
-const port = process.env.PORT  || 4001;
-
+const port = process.env.PORT || 4001;
 
 server.get("/", homeController);
 
