@@ -1,4 +1,7 @@
+import cloudinary from "cloudinary";
 import Organizer from "../models/organizer.model";
+
+cloudinary.config();
 
 export async function createOrganizer(req, res) {
   try {

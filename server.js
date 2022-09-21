@@ -1,7 +1,10 @@
 import express from "express";
 import { homeController } from "./controllers/home.controller";
 import mongoose from "mongoose";
-
+import dotenv from "dotenv";
+import multer from "multer";
+import cors from "cors";
+import { v4 as uuid } from "uuid";
 import {
   createEvent,
   fetchEvents,
@@ -43,8 +46,19 @@ import {
   fetchTicketTypeById,
   updateTicketType,
 } from "./controllers/tickettype.controller";
-const dotenv = require("dotenv");
+import { validateTicketData } from "./controllers/middleware/ticket.validator";
+import {
+  createTicket,
+  getTicketById,
+  updateTicketById,
+} from "./controllers/ticket.controller";
 dotenv.config();
+
+const storage = multer.diskStorage({
+  filename: function (req, file, callback) {
+    return callback(null, uuid() + "-" + file.originalname);
+  },
+});
 
 const connectToDB = () => mongoose.connect(process.env.DEV_DB);
 
@@ -61,13 +75,22 @@ server.use(
   })
 );
 
-const port = process.env.PORT || 4001;
+server.options("*", cors());
+server.use(cors());
+
+const upload = multer({ storage: storage });
+
+let port = 4002;
+
+if (process.env.NODE_ENV !== "development") {
+  port = process.env.PORT;
+}
 
 server.get("/", homeController);
 
 // events routes
 server.get("/event", fetchEvents);
-server.post("/event", validateEventData, createEvent);
+server.post("/event", upload.single("image"), validateEventData, createEvent);
 server.get("/event/:id", fetchEventById);
 server.put("/event/:id", updateEvent);
 server.delete("/event/:id", deleteEvent);
@@ -92,6 +115,11 @@ server.post("/organizer", validateOrganizerData, createOrganizer);
 server.get("/organizer/:id", fetchOrganizerById);
 server.put("/organizer/:id", validateOrganizerUpdateData, updateOrganizer);
 server.delete("/organizer/:id", deleteOrganizer);
+
+//ticket routes
+server.post("/ticket", validateTicketData, createTicket);
+server.get("/ticket/:id", getTicketById);
+server.patch("/ticket/:id", updateTicketById);
 
 server.listen(port, () => {
   console.log("server started and running on port " + port);

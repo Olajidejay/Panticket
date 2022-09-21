@@ -15,13 +15,21 @@ const ticketSchema = new Schema({
   status: {
     String,
   },
-  issuedDate: Date,
+  issuedDate: { Date },
   email: {
     type: String,
   },
   event: {
     type: String,
     ref: "Event",
+  },
+  ticketType: {
+    type: String,
+    ref: "TicketType",
+  },
+  user: {
+    ref: "User",
+    type: String,
   },
 });
 

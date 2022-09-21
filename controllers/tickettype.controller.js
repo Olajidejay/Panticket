@@ -5,10 +5,9 @@ export async function createTicketType(req, res) {
     const newTicketType = await TicketType.create(req.body);
     return res.status(201).json({
       message: "ticket type created successfully",
-      event: newTicketType,
+      ticketType: newTicketType,
     });
   } catch (err) {
-    console.error(err);
     return res.status(500).json({
       message: "Issues processing your request",
     });
